@@ -37,7 +37,7 @@ export const side_nav_menu_order: string[] = [
 export const docconfig = {
   hide_table_of_contents: false,
   hide_breadcrumbs: false,
-  hide_side_navigations: true,
+  hide_side_navigations: false,
   hide_datetime: false,
   hide_time: true,
   hide_search: false,
