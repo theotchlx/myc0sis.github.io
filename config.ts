@@ -51,7 +51,7 @@ export const Socials: SocialObjects = [
     name: "Github",
     href: "https://github.com/HYP3R00T/",
     linkTitle: ` ${SITE.title} on Github`,
-    active: true,
+    active: false,
   },
   {
     name: "Facebook",
@@ -61,9 +61,9 @@ export const Socials: SocialObjects = [
   },
   {
     name: "Instagram",
-    href: "https://github.com/HYP3R00T/",
+    href: "https://instagram.com/tarantulaaddicts",
     linkTitle: `${SITE.title} on Instagram`,
-    active: false,
+    active: true,
   }, 
   {
     name: "LinkedIn",
@@ -79,9 +79,9 @@ export const Socials: SocialObjects = [
   },
   {
     name: "Twitter",
-    href: "https://github.com/HYP3R00T/",
+    href: "https://twitter.com/ta_discord",
     linkTitle: `${SITE.title} on Twitter`,
-    active: false,
+    active: true,
   },
   {
     name: "Twitch",
@@ -127,9 +127,9 @@ export const Socials: SocialObjects = [
   },
   {
     name: "Reddit",
-    href: "https://github.com/HYP3R00T/",
+    href: "https://reddit.com/r/tarantulas",
     linkTitle: `${SITE.title} on Reddit`,
-    active: false,
+    active: true,
   },
   {
     name: "Telegram",
