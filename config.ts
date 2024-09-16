@@ -1,12 +1,12 @@
 import type { SocialObjects } from "@/lib/types";
 
 export const SITE = {
-  website: "https://hyperoot.dev", // replace this with your deployed domain
-  author: "HYP3R00T",
-  desc: "Documentation template using Astro and Shadcn",
+  website: "https://wiki.arachnid.info", // replace this with your deployed domain
+  author: "deadcodexo",
+  desc: "Arachnid Information Powered by Animal Learning",
   title: "Arachnid Information",
   ogImage: "og-image.jpg",
-  repo: "https://github.com/HYP3R00T/CelestialDocs",
+  repo: "https://github.com/myc0sis/myc0sis.github.io",
 };
 
 export const LOCALE = {
