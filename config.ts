@@ -2,7 +2,7 @@ import type { SocialObjects } from "@/lib/types";
 
 export const SITE = {
   website: "https://wiki.arachnid.info", // replace this with your deployed domain
-  author: "deadcodexo",
+  author: "deadcodeXO",
   desc: "Arachnid Information Powered by Animal Learning",
   title: "Arachnid Information",
   ogImage: "og-image.jpg",
@@ -37,7 +37,7 @@ export const side_nav_menu_order: string[] = [
 export const docconfig = {
   hide_table_of_contents: false,
   hide_breadcrumbs: false,
-  hide_side_navigations: false,
+  hide_side_navigations: true,
   hide_datetime: false,
   hide_time: true,
   hide_search: false,
