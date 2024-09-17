@@ -8,6 +8,6 @@
 
 **CelestialDocs** is a simple and versatile documentation template built with Astro. It provides a clean and minimal interface for creating documentation websites, leveraging the power of Astro and Tailwind CSS for a streamlined user experience.
 
-## Completed & Road Map
+## Road Map & Completions
 
-- Tarantula Overview added
+- [Tarantula Overview](https://wiki.arachnid.info/arachnids/tarantulas) added.
