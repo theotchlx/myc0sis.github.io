@@ -13,6 +13,7 @@ export default defineConfig({
     shikiConfig: {
       // theme: "catppuccin-mocha",
       themes: {
+        showSidebarOnMobile: true,
         light: "catppuccin-latte",
         dark: "catppuccin-macchiato",
       },
