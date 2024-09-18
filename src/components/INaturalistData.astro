@@ -22,6 +22,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
   <a class="next">&#10095;</a>
   <img class="modal-content" id="modal-image">
   <div id="modal-caption"></div>
+  <div id="modal-wiki-link"></div>
   <div id="modal-thumbnails"></div>
 </div>
 
@@ -35,6 +36,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
       taxon?: {
         name: string;
         preferred_common_name: string;
+        wikipedia_url: string | null;
       };
     }
 
@@ -44,6 +46,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-image') as HTMLImageElement;
     const captionText = document.getElementById('modal-caption');
+    const wikiLinkContainer = document.getElementById('modal-wiki-link');
     const modalThumbnails = document.getElementById('modal-thumbnails');
     const closeBtn = document.getElementsByClassName('close')[0] as HTMLElement;
     const prevBtn = document.querySelector('.prev') as HTMLElement;
@@ -53,7 +56,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     let currentImageIndex = 0;
     let observations: Observation[] = [];
 
-    if (container && searchInput && searchButton && modal && modalImg && captionText && modalThumbnails && closeBtn && prevBtn && nextBtn) {
+    if (container && searchInput && searchButton && modal && modalImg && captionText && wikiLinkContainer && modalThumbnails && closeBtn && prevBtn && nextBtn) {
       const perPage = container.dataset.perPage || '5';
       const taxonId = container.dataset.taxonId;
       const searchType = container.dataset.searchType || 'general';
@@ -71,6 +74,13 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
             const speciesName = observation.species_guess || observation.taxon?.preferred_common_name || observation.taxon?.name || "Unknown Species";
             if (captionText) {
               captionText.innerHTML = `${speciesName}<br>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}`;
+            }
+            if (wikiLinkContainer) {
+              if (observation.taxon?.wikipedia_url) {
+                wikiLinkContainer.innerHTML = `<a href="${observation.taxon.wikipedia_url}" target="_blank" rel="noopener noreferrer">Learn more on Wikipedia</a>`;
+              } else {
+                wikiLinkContainer.innerHTML = '';
+              }
             }
             currentObservationIndex = observationIndex;
             currentImageIndex = imageIndex;
@@ -124,7 +134,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
         }
 
         try {
-          let url = `https://api.inaturalist.org/v1/observations?per_page=${perPage}&order=desc&order_by=created_at`;
+          let url = `https://api.inaturalist.org/v1/observations?per_page=${perPage}&order=desc&order_by=created_at&photos=true`;
           if (taxonId) {
             url += `&taxon_id=${taxonId}`;
           }
@@ -296,6 +306,21 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     padding: 10px 0;
     height: 50px;
   }
+  #modal-wiki-link {
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    padding: 10px 0;
+  }
+  #modal-wiki-link a {
+    color: #4CAF50;
+    text-decoration: none;
+  }
+  #modal-wiki-link a:hover {
+    text-decoration: underline;
+  }
   #modal-thumbnails {
     display: flex;
     justify-content: center;
@@ -375,5 +400,6 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     }
   }
 </style>
+
 
 
