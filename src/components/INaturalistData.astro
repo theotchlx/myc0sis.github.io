@@ -27,7 +27,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     id: number;
     species_guess: string | null;
     observed_on: string;
-    photos: { url: string; large_url: string }[];
+    photos: { url: string }[];
     taxon?: {
       name: string;
       preferred_common_name: string;
@@ -46,6 +46,10 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     const perPage = container.dataset.perPage || '5';
     const taxonId = container.dataset.taxonId;
     const searchType = container.dataset.searchType || 'general';
+
+    function getLargeImageUrl(url: string): string {
+      return url.replace('square', 'large');
+    }
 
     async function fetchINaturalistData(query: string = '') {
       try {
@@ -77,8 +81,9 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
           const speciesName = observation.species_guess || observation.taxon?.preferred_common_name || observation.taxon?.name || "Unknown Species";
           const observationElement = document.createElement('div');
           observationElement.className = 'observation-item';
+          const thumbnailUrl = observation.photos[0]?.url || '';
           observationElement.innerHTML = `
-            <img src="${observation.photos[0]?.url || ''}" alt="${speciesName}" loading="lazy" class="thumbnail">
+            <img src="${thumbnailUrl}" alt="${speciesName}" loading="lazy" class="thumbnail">
             <div class="observation-info">
               <h3>${speciesName}</h3>
               <p>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}</p>
@@ -89,7 +94,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
           const thumbnail = observationElement.querySelector('.thumbnail') as HTMLImageElement;
           thumbnail.addEventListener('click', () => {
             modal.style.display = "block";
-            modalImg.src = observation.photos[0]?.large_url || '';
+            modalImg.src = getLargeImageUrl(thumbnailUrl);
             captionText.innerHTML = `${speciesName}<br>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}`;
           });
         });
