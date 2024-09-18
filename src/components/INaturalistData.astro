@@ -12,29 +12,45 @@ const { perPage = 5, taxonId } = Astro.props;
 </div>
 
 <script>
-  const container = document.getElementById('inaturalist-data');
-  const perPage = container.dataset.perPage;
-  const taxonId = container.dataset.taxonId;
-
-  async function fetchINaturalistData() {
-    try {
-      let url = `https://api.inaturalist.org/v1/observations?per_page=${perPage}`;
-      if (taxonId) {
-        url += `&taxon_id=${taxonId}`;
-      }
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      container.innerHTML = ''; // Clear loading message
-      
-      data.results.forEach(observation => {
-        // ... (same as before)
-      });
-    } catch (error) {
-      console.error('Error fetching iNaturalist data:', error);
-      container.innerHTML = 'Error loading iNaturalist data.';
-    }
+  interface Observation {
+    species_guess: string;
+    observed_on: string;
+    photos: { url: string }[];
   }
 
-  fetchINaturalistData();
+  const container = document.getElementById('inaturalist-data');
+  if (container) {
+    const perPage = container.dataset.perPage || '5';
+    const taxonId = container.dataset.taxonId;
+
+    async function fetchINaturalistData() {
+      try {
+        let url = `https://api.inaturalist.org/v1/observations?per_page=${perPage}`;
+        if (taxonId) {
+          url += `&taxon_id=${taxonId}`;
+        }
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        container.innerHTML = ''; // Clear loading message
+        
+        data.results.forEach((observation: Observation) => {
+          const observationElement = document.createElement('div');
+          observationElement.innerHTML = `
+            <h3>${observation.species_guess}</h3>
+            <p>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}</p>
+            <img src="${observation.photos[0]?.url || ''}" alt="${observation.species_guess}" width="200">
+          `;
+          container.appendChild(observationElement);
+        });
+      } catch (error) {
+        console.error('Error fetching iNaturalist data:', error);
+        container.innerHTML = 'Error loading iNaturalist data.';
+      }
+    }
+
+    fetchINaturalistData();
+  } else {
+    console.error('Could not find container element for iNaturalist data');
+  }
 </script>
