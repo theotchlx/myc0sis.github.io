@@ -1,9 +1,26 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import INaturalistData from '@/components/INaturalistData.astro';
+title: iNaturalist Observations
+description: Recent observations from iNaturalist
 ---
 
-<Layout title="iNaturalist Data Example">
-  <h1>Recent Bird Observations</h1>
-  <INaturalistData perPage={10} taxonId={3} />
-</Layout>
+import INaturalistData from '../../components/INaturalistData.astro';
+
+# {frontmatter.title}
+
+{frontmatter.description}
+
+Here are some recent observations from iNaturalist:
+
+<INaturalistData perPage={5} />
+
+## Birds
+
+Here are some recent bird observations:
+
+<INaturalistData perPage={3} taxonId={3} />
+
+## Plants
+
+And here are some plant observations:
+
+<INaturalistData perPage={3} taxonId={47126} />
