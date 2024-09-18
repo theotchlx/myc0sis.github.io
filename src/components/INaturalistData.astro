@@ -22,6 +22,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
   <a class="next">&#10095;</a>
   <img class="modal-content" id="modal-image">
   <div id="modal-caption"></div>
+  <div id="modal-thumbnails"></div>
 </div>
 
 <script>
@@ -43,14 +44,16 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-image') as HTMLImageElement;
     const captionText = document.getElementById('modal-caption');
+    const modalThumbnails = document.getElementById('modal-thumbnails');
     const closeBtn = document.getElementsByClassName('close')[0] as HTMLElement;
     const prevBtn = document.querySelector('.prev') as HTMLElement;
     const nextBtn = document.querySelector('.next') as HTMLElement;
 
+    let currentObservationIndex = 0;
     let currentImageIndex = 0;
     let observations: Observation[] = [];
 
-    if (container && searchInput && searchButton && modal && modalImg && captionText && closeBtn && prevBtn && nextBtn) {
+    if (container && searchInput && searchButton && modal && modalImg && captionText && modalThumbnails && closeBtn && prevBtn && nextBtn) {
       const perPage = container.dataset.perPage || '5';
       const taxonId = container.dataset.taxonId;
       const searchType = container.dataset.searchType || 'general';
@@ -59,16 +62,34 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
         return url.replace('square', 'large');
       }
 
-      function showImage(index: number) {
-        if (index >= 0 && index < observations.length) {
-          const observation = observations[index];
-          const thumbnailUrl = observation.photos[0]?.url || '';
-          modalImg.src = getLargeImageUrl(thumbnailUrl);
-          const speciesName = observation.species_guess || observation.taxon?.preferred_common_name || observation.taxon?.name || "Unknown Species";
-          if (captionText) {
-            captionText.innerHTML = `${speciesName}<br>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}`;
+      function showImage(observationIndex: number, imageIndex: number) {
+        if (observationIndex >= 0 && observationIndex < observations.length) {
+          const observation = observations[observationIndex];
+          if (imageIndex >= 0 && imageIndex < observation.photos.length) {
+            const thumbnailUrl = observation.photos[imageIndex].url;
+            modalImg.src = getLargeImageUrl(thumbnailUrl);
+            const speciesName = observation.species_guess || observation.taxon?.preferred_common_name || observation.taxon?.name || "Unknown Species";
+            if (captionText) {
+              captionText.innerHTML = `${speciesName}<br>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}`;
+            }
+            currentObservationIndex = observationIndex;
+            currentImageIndex = imageIndex;
+            updateModalThumbnails(observation);
           }
-          currentImageIndex = index;
+        }
+      }
+
+      function updateModalThumbnails(observation: Observation) {
+        if (modalThumbnails) {
+          modalThumbnails.innerHTML = '';
+          observation.photos.forEach((photo, index) => {
+            const thumb = document.createElement('img');
+            thumb.src = photo.url;
+            thumb.alt = `Thumbnail ${index + 1}`;
+            thumb.className = index === currentImageIndex ? 'modal-thumbnail active' : 'modal-thumbnail';
+            thumb.addEventListener('click', () => showImage(currentObservationIndex, index));
+            modalThumbnails.appendChild(thumb);
+          });
         }
       }
 
@@ -128,7 +149,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
             thumbnail.addEventListener('click', () => {
               if (modal) {
                 modal.style.display = "block";
-                showImage(index);
+                showImage(index, 0);
               }
             });
           });
@@ -162,11 +183,15 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
       }
 
       prevBtn.onclick = function() {
-        showImage(currentImageIndex - 1);
+        const observation = observations[currentObservationIndex];
+        const newIndex = (currentImageIndex - 1 + observation.photos.length) % observation.photos.length;
+        showImage(currentObservationIndex, newIndex);
       }
 
       nextBtn.onclick = function() {
-        showImage(currentImageIndex + 1);
+        const observation = observations[currentObservationIndex];
+        const newIndex = (currentImageIndex + 1) % observation.photos.length;
+        showImage(currentObservationIndex, newIndex);
       }
 
       window.onclick = function(event) {
@@ -249,7 +274,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     display: block;
     width: 80%;
     max-width: 800px;
-    max-height: 80vh;
+    max-height: 70vh;
     object-fit: contain;
   }
   #modal-caption {
@@ -260,7 +285,23 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     text-align: center;
     color: #ccc;
     padding: 10px 0;
-    height: 150px;
+    height: 50px;
+  }
+  #modal-thumbnails {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .modal-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .modal-thumbnail.active {
+    border-color: #fff;
   }
   .close {
     position: absolute;
@@ -323,9 +364,3 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
     }
   }
 </style>
-
-
-
-
-
-
