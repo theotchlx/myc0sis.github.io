@@ -12,7 +12,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
   <input type="text" id="search-input" placeholder={searchType === 'species' ? "Search species..." : "Search observations..."}>
   <button id="search-button">Search</button>
   <div id="inaturalist-data" data-per-page={perPage} data-taxon-id={taxonId} data-search-type={searchType}>
-    Loading iNaturalist data...
+    Enter a search term to view observations.
   </div>
 </div>
 
@@ -51,23 +51,27 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
       return url.replace('square', 'large');
     }
 
-    async function fetchINaturalistData(query: string = '') {
+    async function fetchINaturalistData(query: string) {
+      if (!query.trim()) {
+        container.innerHTML = 'Please enter a search term.';
+        return;
+      }
+
+      container.innerHTML = 'Loading...';
+
       try {
         let url = `https://api.inaturalist.org/v1/observations?per_page=${perPage}&order=desc&order_by=created_at`;
         if (taxonId) {
           url += `&taxon_id=${taxonId}`;
         }
-        if (query) {
-          if (searchType === 'species') {
-            url += `&taxon_name=${encodeURIComponent(query)}`;
-          } else {
-            url += `&q=${encodeURIComponent(query)}`;
-          }
+        if (searchType === 'species') {
+          url += `&taxon_name=${encodeURIComponent(query)}`;
+        } else {
+          url += `&q=${encodeURIComponent(query)}`;
         }
+        
         const response = await fetch(url);
         const data = await response.json();
-        
-        container.innerHTML = ''; // Clear loading message
         
         if (data.results.length === 0) {
           container.innerHTML = 'No results found.';
@@ -99,6 +103,7 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
           });
         });
 
+        container.innerHTML = '';
         container.appendChild(grid);
       } catch (error) {
         console.error('Error fetching iNaturalist data:', error);
@@ -125,9 +130,6 @@ const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
         modal.style.display = "none";
       }
     }
-
-    // Initial load
-    fetchINaturalistData();
   } else {
     console.error('Could not find necessary elements for iNaturalist data');
   }
