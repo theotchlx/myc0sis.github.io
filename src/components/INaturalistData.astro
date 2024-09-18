@@ -2,24 +2,26 @@
 interface Props {
   perPage?: number;
   taxonId?: number;
+  searchType?: 'general' | 'species';
 }
 
-const { perPage = 5, taxonId } = Astro.props;
+const { perPage = 5, taxonId, searchType = 'general' } = Astro.props;
 ---
 
 <div class="inaturalist-container">
-  <input type="text" id="search-input" placeholder="Search observations...">
+  <input type="text" id="search-input" placeholder={searchType === 'species' ? "Search species..." : "Search observations..."}>
   <button id="search-button">Search</button>
-  <div id="inaturalist-data" data-per-page={perPage} data-taxon-id={taxonId}>
+  <div id="inaturalist-data" data-per-page={perPage} data-taxon-id={taxonId} data-search-type={searchType}>
     Loading iNaturalist data...
   </div>
 </div>
 
 <script>
   interface Observation {
+    id: number;
     species_guess: string;
     observed_on: string;
-    photos: { url: string }[];
+    photos: { url: string; large_url: string }[];
   }
 
   const container = document.getElementById('inaturalist-data');
@@ -29,6 +31,7 @@ const { perPage = 5, taxonId } = Astro.props;
   if (container && searchInput && searchButton) {
     const perPage = container.dataset.perPage || '5';
     const taxonId = container.dataset.taxonId;
+    const searchType = container.dataset.searchType || 'general';
 
     async function fetchINaturalistData(query: string = '') {
       try {
@@ -37,7 +40,11 @@ const { perPage = 5, taxonId } = Astro.props;
           url += `&taxon_id=${taxonId}`;
         }
         if (query) {
-          url += `&q=${encodeURIComponent(query)}`;
+          if (searchType === 'species') {
+            url += `&taxon_name=${encodeURIComponent(query)}`;
+          } else {
+            url += `&q=${encodeURIComponent(query)}`;
+          }
         }
         const response = await fetch(url);
         const data = await response.json();
@@ -49,15 +56,25 @@ const { perPage = 5, taxonId } = Astro.props;
           return;
         }
 
+        const grid = document.createElement('div');
+        grid.className = 'observation-grid';
+
         data.results.forEach((observation: Observation) => {
           const observationElement = document.createElement('div');
+          observationElement.className = 'observation-item';
           observationElement.innerHTML = `
-            <h3>${observation.species_guess}</h3>
-            <p>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}</p>
-            <img src="${observation.photos[0]?.url || ''}" alt="${observation.species_guess}" width="200">
+            <a href="${observation.photos[0]?.large_url || '#'}" target="_blank">
+              <img src="${observation.photos[0]?.url || ''}" alt="${observation.species_guess}" loading="lazy">
+            </a>
+            <div class="observation-info">
+              <h3>${observation.species_guess}</h3>
+              <p>Observed on: ${new Date(observation.observed_on).toLocaleDateString()}</p>
+            </div>
           `;
-          container.appendChild(observationElement);
+          grid.appendChild(observationElement);
         });
+
+        container.appendChild(grid);
       } catch (error) {
         console.error('Error fetching iNaturalist data:', error);
         container.innerHTML = 'Error loading iNaturalist data.';
@@ -91,5 +108,32 @@ const { perPage = 5, taxonId } = Astro.props;
   }
   #search-button {
     padding: 5px 10px;
+  }
+  .observation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .observation-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .observation-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  .observation-info {
+    padding: 10px;
+  }
+  .observation-info h3 {
+    margin: 0;
+    font-size: 1em;
+  }
+  .observation-info p {
+    margin: 5px 0 0;
+    font-size: 0.8em;
   }
 </style>

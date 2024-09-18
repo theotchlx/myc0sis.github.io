@@ -5,16 +5,14 @@ description: Search and view recent observations from iNaturalist
 
 import INaturalistData from '../../components/INaturalistData.astro';
 
-<INaturalistData perPage={10} />
+## General Search
 
-## Birds
+Search for any observations:
 
-Search for bird observations:
+<INaturalistData perPage={20} searchType="general" />
 
-<INaturalistData perPage={5} taxonId={3} />
+## Species Search
 
-## Plants
+Search for specific species:
 
-Search for plant observations:
-
-<INaturalistData perPage={5} taxonId={47126} />
+<INaturalistData perPage={20} searchType="species" />
