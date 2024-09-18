@@ -7,8 +7,12 @@ interface Props {
 const { perPage = 5, taxonId } = Astro.props;
 ---
 
-<div id="inaturalist-data" data-per-page={perPage} data-taxon-id={taxonId}>
-  Loading iNaturalist data...
+<div class="inaturalist-container">
+  <input type="text" id="search-input" placeholder="Search observations...">
+  <button id="search-button">Search</button>
+  <div id="inaturalist-data" data-per-page={perPage} data-taxon-id={taxonId}>
+    Loading iNaturalist data...
+  </div>
 </div>
 
 <script>
@@ -19,21 +23,32 @@ const { perPage = 5, taxonId } = Astro.props;
   }
 
   const container = document.getElementById('inaturalist-data');
-  if (container) {
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const searchButton = document.getElementById('search-button');
+
+  if (container && searchInput && searchButton) {
     const perPage = container.dataset.perPage || '5';
     const taxonId = container.dataset.taxonId;
 
-    async function fetchINaturalistData() {
+    async function fetchINaturalistData(query: string = '') {
       try {
         let url = `https://api.inaturalist.org/v1/observations?per_page=${perPage}`;
         if (taxonId) {
           url += `&taxon_id=${taxonId}`;
+        }
+        if (query) {
+          url += `&q=${encodeURIComponent(query)}`;
         }
         const response = await fetch(url);
         const data = await response.json();
         
         container.innerHTML = ''; // Clear loading message
         
+        if (data.results.length === 0) {
+          container.innerHTML = 'No results found.';
+          return;
+        }
+
         data.results.forEach((observation: Observation) => {
           const observationElement = document.createElement('div');
           observationElement.innerHTML = `
@@ -49,8 +64,32 @@ const { perPage = 5, taxonId } = Astro.props;
       }
     }
 
+    searchButton.addEventListener('click', () => {
+      fetchINaturalistData(searchInput.value);
+    });
+
+    searchInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        fetchINaturalistData(searchInput.value);
+      }
+    });
+
+    // Initial load
     fetchINaturalistData();
   } else {
-    console.error('Could not find container element for iNaturalist data');
+    console.error('Could not find necessary elements for iNaturalist data');
   }
 </script>
+
+<style>
+  .inaturalist-container {
+    margin-bottom: 20px;
+  }
+  #search-input {
+    padding: 5px;
+    margin-right: 10px;
+  }
+  #search-button {
+    padding: 5px 10px;
+  }
+</style>
