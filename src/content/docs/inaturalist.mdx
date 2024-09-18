@@ -1,0 +1,9 @@
+---
+import Layout from '../layouts/Layout.astro';
+import INaturalistData from '@/components/INaturalistData.astro';
+---
+
+<Layout title="iNaturalist Data Example">
+  <h1>Recent Bird Observations</h1>
+  <INaturalistData perPage={10} taxonId={3} />
+</Layout>

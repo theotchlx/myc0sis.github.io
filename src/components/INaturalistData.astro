@@ -1,0 +1,40 @@
+---
+interface Props {
+  perPage?: number;
+  taxonId?: number;
+}
+
+const { perPage = 5, taxonId } = Astro.props;
+---
+
+<div id="inaturalist-data" data-per-page={perPage} data-taxon-id={taxonId}>
+  Loading iNaturalist data...
+</div>
+
+<script>
+  const container = document.getElementById('inaturalist-data');
+  const perPage = container.dataset.perPage;
+  const taxonId = container.dataset.taxonId;
+
+  async function fetchINaturalistData() {
+    try {
+      let url = `https://api.inaturalist.org/v1/observations?per_page=${perPage}`;
+      if (taxonId) {
+        url += `&taxon_id=${taxonId}`;
+      }
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      container.innerHTML = ''; // Clear loading message
+      
+      data.results.forEach(observation => {
+        // ... (same as before)
+      });
+    } catch (error) {
+      console.error('Error fetching iNaturalist data:', error);
+      container.innerHTML = 'Error loading iNaturalist data.';
+    }
+  }
+
+  fetchINaturalistData();
+</script>
