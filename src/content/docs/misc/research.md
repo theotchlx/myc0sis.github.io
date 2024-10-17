@@ -1,8 +1,12 @@
 ---
 title: Research 
+author: bad juju
 ---
 
 # Research: Sources & Tools
+
+<br/><br/>
+
 
 # Bookmarklets
 
@@ -10,11 +14,14 @@ A **bookmarklet** is a special kind of bookmark within the web browser that allo
 
 Below are a few bookmarklets used by the author:
 
+<br/><br/>
+
 
 **[GoogleScholar](https://scholar.google.com):**
 ```
 javascript:q = - + (window.getSelection ? window.getSelection() : document.getSelection ? document.getSelection() : document.selection.createRange().text); if (!q) q = prompt("Search terms? ... ", ""); if (q!=null) location="https://scholar.google.com/scholar?hl=en&as_sdt=0%2C10&q=" + escape(q).replace(/ /g, "+"); void 0
 ```
+<br/><br/>
 
 This bookmarklet lets you search Google Scholar in two ways:
 
@@ -23,23 +30,37 @@ This bookmarklet lets you search Google Scholar in two ways:
 
 It's a convenient tool for quickly searching Google Scholar based on what you're reading or entering your own query.
 
+<br/><br/>
+
+
 **[Arachnoboards](https://arachnoboards.com/):**
 ```
 javascript:(function(){void(q=prompt('What are you looking for?',''));if(q)location.href='https://arachnoboards.com/search/?q='+' '+escape(q)})()
 ```
 
+<br/><br/>
+
 This bookmarklet helps you search for something quickly on the Arachnoboards forum. When you click it, a box will pop up asking, "What are you looking for?" You just type in what you want to search for, and it will automatically take you to the search field on AB. It’s a handy shortcut for searching without needing to go to the site first.
+
+<br/><br/>
+
 
 **[TarantulaForum](https://tarantulaforum.com):**
 ```
 javascript:(function(){void(q=prompt('What are you looking for?',''));if(q)location.href='https://tarantulaforum.com/search/?q='+' '+escape(q)})()
 ```
+<br/><br/>
+
 
 This bookmarklet helps you search for something quickly on the Tarantula forum. 
+
+<br/><br/>
 
 **[BugGuide](https://bugguide.net):**
 ```
 javascript:(function(){void(q=prompt('What are you looking for?',''));if(q)location.href='https://bugguide.net/index.php?q=search&keys='+' '+escape(q)})()
 ```
+<br/><br/>
+
 
 This bookmarklet allows you to search the BugGuide website easily.
