@@ -11,7 +11,7 @@
 ## Road Map & Completions
 
 - [Tarantula Overview](https://wiki.arachnid.info/arachnids/tarantulas) added.
-- Jumping spiders started. (placeholder article, containers errors)
+- Jumping spiders started. (placeholder article, contains errors)
 - Scorpions started.
 - Amblypigi Overview TBD...
 - Protocols Overview TBD...
